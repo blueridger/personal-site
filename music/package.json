@@ -2,6 +2,7 @@
   "name": "music",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
@@ -19,7 +20,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "deploy": "cp build ../site/music -r",
+    "deploy": "rm -rf ../site/music && cp build ../site/music -r",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
