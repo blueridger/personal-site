@@ -34,6 +34,9 @@ const theme = createTheme({
       primary: '#DC79D6',
       secondary: '#DC79D6',
     },
+    background: {
+      paper: '#141313',
+    },
   },
 });
 
