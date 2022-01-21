@@ -45,8 +45,8 @@ function App() {
   const [mode, setMode] = React.useState(modes[0]);
   const [num, setNum] = React.useState(1);
   const [answer, setAnswer] = React.useState(null);
-  const [keyConfig, setKeyConfig] = React.useState("random");
-  const [modeConfig, setModeConfig] = React.useState("random");
+  const [keyConfig, setKeyConfig] = React.useState("C");
+  const [modeConfig, setModeConfig] = React.useState("ionian");
   const [numConfig, setNumConfig] = React.useState(7);
   const [confetti, setConfetti] = React.useState(false);
   const createQuestion = React.useCallback(
