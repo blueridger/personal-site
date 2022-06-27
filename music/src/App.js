@@ -11,8 +11,9 @@ import {
 } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { HelpOutline } from "@mui/icons-material";
-import { getNote, availableModes as modes, keys } from "./music";
+import { getNote, availableModes as modes, keys, isTheoretical } from "./music";
 import Confetti from 'react-dom-confetti';
+import { useEffect } from "react";
 
 const config = {
   angle: 20,
@@ -40,25 +41,39 @@ const theme = createTheme({
   },
 });
 
+const RANDOM = "random"
+const RANDOM_TH = "random w/theoreticals"
+
 function App() {
   const [key, setKey] = React.useState(keys[0]);
   const [mode, setMode] = React.useState(modes[0]);
   const [num, setNum] = React.useState(1);
   const [answer, setAnswer] = React.useState(null);
-  const [keyConfig, setKeyConfig] = React.useState("C");
-  const [modeConfig, setModeConfig] = React.useState("ionian");
-  const [numConfig, setNumConfig] = React.useState(7);
+  const [keyConfig, setKeyConfig] = React.useState(
+    localStorage.getItem("keyConfig") || "C"
+  );
+  const [modeConfig, setModeConfig] = React.useState(
+    localStorage.getItem("modeConfig") || "ionian"
+  );
+  const [numConfig, setNumConfig] = React.useState(
+    localStorage.getItem("numConfig") || 7
+  );
   const [confetti, setConfetti] = React.useState(false);
+  useEffect(() => localStorage.setItem("keyConfig", keyConfig), [keyConfig])
+  useEffect(() => localStorage.setItem("modeConfig", modeConfig), [modeConfig])
+  useEffect(() => localStorage.setItem("numConfig", numConfig), [numConfig])
+
   const createQuestion = React.useCallback(
     function () {
-      const newKey =
-        keyConfig === "random"
-          ? keys[Math.floor(Math.random() * keys.length)]
-          : keyConfig;
       const newMode =
-        modeConfig === "random"
+        modeConfig === RANDOM
           ? modes[Math.floor(Math.random() * modes.length)]
           : modeConfig;
+      let newKey = keyConfig === RANDOM || keyConfig === RANDOM_TH
+        ? keys[Math.floor(Math.random() * keys.length)]
+        : keyConfig;
+      while (keyConfig === RANDOM && isTheoretical(newKey, newMode, numConfig))
+        newKey = keys[Math.floor(Math.random() * keys.length)];
       const newNum = Math.floor(Math.random() * numConfig) + 1;
       setAnswer(getNote(newKey, newNum, newMode));
       setKey(newKey);
@@ -100,7 +115,7 @@ function App() {
         <form onSubmit={checkAnswer}>
           <span>
           
-          <Confetti active={ confetti } config={ config }/>
+          <Confetti active={ confetti } config={ config } />
             <TextField
               id="answer"
               variant="filled"
@@ -119,55 +134,57 @@ function App() {
           </span>
         </form>
         <br />
-        <FormControl >
-          <InputLabel id="key-label" >Key</InputLabel>
-          <Select
-            labelId="key-label"
-            id="keySelect"
-            value={keyConfig}
-            label="Key"
-            onChange={handleKeySelect}
-          >
-            {["random"].concat(keys).map((key) => (
-              <MenuItem key={key} value={key}>
-                {key}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <br />
+        <div className="settings">
+          <FormControl >
+            <InputLabel id="key-label" >Key</InputLabel>
+            <Select
+              labelId="key-label"
+              id="keySelect"
+              value={keyConfig}
+              label="Key"
+              onChange={handleKeySelect}
+            >
+              {[RANDOM, RANDOM_TH].concat(keys).map((key) => (
+                <MenuItem key={key} value={key}>
+                  {key}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <br />
 
-        <FormControl>
-          <InputLabel id="mode-label">Mode</InputLabel>
-          <Select
-            labelId="mode-label"
-            id="modeSelect"
-            value={modeConfig}
-            label="Mode"
-            onChange={handleModeSelect}
-          >
-            {["random"].concat(modes).map((x) => (
-              <MenuItem key={x} value={x}>
-                {x}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <br />
+          <FormControl>
+            <InputLabel id="mode-label">Mode</InputLabel>
+            <Select
+              labelId="mode-label"
+              id="modeSelect"
+              value={modeConfig}
+              label="Mode"
+              onChange={handleModeSelect}
+            >
+              {[RANDOM].concat(modes).map((x) => (
+                <MenuItem key={x} value={x}>
+                  {x}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <br />
 
-        <FormControl>
-          <InputLabel id="num-label">Numbers</InputLabel>
-          <Select
-            labelId="num-label"
-            id="numSelect"
-            value={numConfig}
-            label="Numbers"
-            onChange={handleNumSelect}
-          >
-            <MenuItem value={7}>1-7</MenuItem>
-            <MenuItem value={13}>1-13</MenuItem>
-          </Select>
-        </FormControl>
+          <FormControl>
+            <InputLabel id="num-label">Numbers</InputLabel>
+            <Select
+              labelId="num-label"
+              id="numSelect"
+              value={numConfig}
+              label="Numbers"
+              onChange={handleNumSelect}
+            >
+              <MenuItem value={7}>1-7</MenuItem>
+              <MenuItem value={13}>1-13</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
       </header>
     </div>
     </ThemeProvider>

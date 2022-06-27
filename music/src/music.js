@@ -5,7 +5,11 @@ export const ionianChords = ["", "m", "m", "", "", "m", "dim"];
 const modes = {
   ionian: 0,
   dorian: 1,
+  phrygian: 2,
+  lydian: 3,
   mixolydian: 4,
+  aeolian: 5,
+  locrian: 6
 };
 
 export const availableModes = Array.from(Object.keys(modes))
@@ -41,10 +45,23 @@ export function getNote(key, num, mode) {
     sum(cIntervalsStartingWithKey, index) -
     keySharpFlatModifier;
   let sharpFlatString = "";
-  if (sharpFlatModifier === -1) sharpFlatString = "#";
-  if (sharpFlatModifier === 1) sharpFlatString = "b";
-
+  if (sharpFlatModifier < 0) 
+    for (let i = -1; i >= sharpFlatModifier; i--)
+      sharpFlatString += "#";
+  if (sharpFlatModifier > 0) 
+    for (let i = 1; i <= sharpFlatModifier; i++)
+      sharpFlatString += "b";
+  console.log(note + sharpFlatString + chord)
   return note + sharpFlatString + chord;
+}
+
+export function isTheoretical(key, mode, numConfig) {
+  for (let i = 1; i <= numConfig; i++) {
+    const note = getNote(key, i, mode);
+    if ((note.match(/[#b]/g) || []).length > 1)
+      return true;
+  }
+  return false;
 }
 
 export const keys = [
@@ -65,6 +82,7 @@ export const keys = [
   "A#",
   "Bb",
   "B",
+  "B#",
 ];
 
 // const key = "Db";
