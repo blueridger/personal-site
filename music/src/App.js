@@ -126,7 +126,7 @@ function App() {
               }}
               autoFocus
             />
-            <Tooltip title="Press enter to check. Example answer formats: Gbm, A#, B">
+            <Tooltip title="Press enter to check. Example answer formats: Gbm, A#, B, F##dim">
               <IconButton>
                 <HelpOutline fontSize="large" />
               </IconButton>
